@@ -4,6 +4,8 @@ The first edition is the original python code used to create the LII model. The 
 
 Please refer to "Using Landscape Integrity Index to Evaluate the Cumulative Impacts of BLM Resource Management Programs" thesis by Liling Lee to read more about the project and the process.
 
+https://spatial.usc.edu/wp-content/uploads/formidable/12/Liling-Lee.pdf
+
 ABSTRACT: 
 
 The Bureau of Land Management (BLM) is instrumental in connecting people with
