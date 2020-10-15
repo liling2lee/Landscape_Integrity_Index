@@ -2,7 +2,7 @@
 This is a GIS model of Landscape Integrity Index (LII), which includes python scripts and R Markdown.
 The first edition is the original python code used to create the LII model. The second edition is a more current version that shortened the python code. 
 
-Please refer to "Using Landscape Integrity Index to Evaluate the Cumulative Impacts of BLM Resource Management Programs" thesis by Liling Lee to read more about the project and the process.
+Please refer to "Using Landscape Integrity Index to Evaluate the Cumulative Impacts of BLM Resource Management Programs" thesis by Liling Lee to learn more about the project and the process.
 
 https://spatial.usc.edu/wp-content/uploads/formidable/12/Liling-Lee.pdf
 
