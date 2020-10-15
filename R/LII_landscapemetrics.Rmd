@@ -1,0 +1,241 @@
+---
+title: "Landscape Integrity Index (LII) - Landscape Metrics"
+author: "Liling Lee"
+date: "09/18/2019"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+  html_notebook: default
+
+fontsize: 14pt
+---
+
+## Introduction
+
+The purpose of the model is to create the landscape metrics variables for the Landscape Integrity Index (LII) using the 'landscapemetrics' package and NLCD data. 
+
+## Software Requirements 
+
+* R v.3.5.3
+
+## Data Preparation and Pre-Processing
+
+**Process:**
+
+1. Install and load the necessary packages and set the working directory.
+
+**Note:** User needs to change the working directory.
+s
+```{r}
+# Set working directory
+wd <- setwd("C:/LII")
+
+# Install and load raster, rgdal, sp, kableExtra, knitr, and landscapemetrics packages
+
+if (!requireNamespace("raster", quietly = TRUE))
+  install.packages("raster")
+if (!requireNamespace("rgdal", quietly = TRUE))
+  install.packages("rgdal")
+if (!requireNamespace("sp", quietly = TRUE))
+  install.packages("sp")
+if (!requireNamespace("kableExtra", quietly = TRUE))
+  install.packages("kableExtra")
+if (!requireNamespace("knitr", quietly = TRUE))
+  install.packages("knitr")
+if (!requireNamespace("landscapemetrics", quietly = TRUE))
+  install.packages("landscapemetrics")
+
+library(raster)
+library(rgdal)
+library(sp)
+library(kableExtra)
+library(knitr)
+library(landscapemetrics)
+
+```
+
+**Data Needed:**
+* Land Cover Data: NLCD
+    + **Note:** The resolution of a raster cell has to be in meters, since the package converts units internally and returns results in either meters, square meters or hectares. 
+
+
+**Projection:** 
+NAD 1983 UTM Zone 13N
+
+**Note:** The user needs to change the projection that is suitable for the study area.
+
+```{r}
+# Import raster
+NLCD2001 <- raster("C:/LII/landscapemetrics/NLCD2001.tif")
+NLCD2004 <- raster("C:/LII/landscapemetrics/NLCD2004.tif")
+NLCD2006 <- raster("C:/LII/landscapemetrics/NLCD2006.tif")
+NLCD2008 <- raster("C:/LII/landscapemetrics/NLCD2008.tif")
+NLCD2011 <- raster("C:/LII/landscapemetrics/NLCD2011.tif")
+NLCD2013 <- raster("C:/LII/landscapemetrics/NLCD2013.tif")
+NLCD2016 <- raster("C:/LII/landscapemetrics/NLCD2016.tif")
+
+# Check landscape
+check_landscape(NLCD2001)
+check_landscape(NLCD2004)
+check_landscape(NLCD2006)
+check_landscape(NLCD2008)
+check_landscape(NLCD2011)
+check_landscape(NLCD2013)
+check_landscape(NLCD2016)
+
+```
+
+## Shape Metrics: Perimeter-Area Fractal Dimension (PAFRAC)
+
+```{r}
+# Shape Metrics: Perimeter-Area Fractal Dimension (PAFRAC)
+lsm_c_pafrac(NLCD2001, directions = 8, verbose = TRUE)
+lsm_c_pafrac(NLCD2004, directions = 8, verbose = TRUE)
+lsm_c_pafrac(NLCD2006, directions = 8, verbose = TRUE)
+lsm_c_pafrac(NLCD2008, directions = 8, verbose = TRUE)
+lsm_c_pafrac(NLCD2011, directions = 8, verbose = TRUE)
+lsm_c_pafrac(NLCD2013, directions = 8, verbose = TRUE)
+lsm_c_pafrac(NLCD2016, directions = 8, verbose = TRUE)
+
+```
+
+## Core Area Metrics: Coefficient of Variation of Core Area Index (CAI_CV)
+
+```{r}
+# Core Area Metrics: Coefficient of Variation of Core Area Index (CAI_CV)
+lsm_c_cai_cv(NLCD2001, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_cai_cv(NLCD2004, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_cai_cv(NLCD2006, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_cai_cv(NLCD2008, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_cai_cv(NLCD2011, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_cai_cv(NLCD2013, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_cai_cv(NLCD2016, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+
+```
+
+## Core Area Metrics: Standard Deviation of Core Area Index (CAI_SD)
+
+```{r}
+# Core Area Metrics: Standard Deviation of Core Area Index (CAI_SD)
+lsm_c_cai_sd(NLCD2001, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_cai_sd(NLCD2004, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_cai_sd(NLCD2006, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_cai_sd(NLCD2008, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_cai_sd(NLCD2011, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_cai_sd(NLCD2013, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_cai_sd(NLCD2016, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+
+```
+
+## Core Area Metrics: Coefficient of Variation of Core Area (CORE_CV)
+
+```{r}
+# Core Area Metrics: Coefficient of Variation of Core Area (CORE_CV)
+lsm_c_core_cv(NLCD2001, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_core_cv(NLCD2004, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_core_cv(NLCD2006, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_core_cv(NLCD2008, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_core_cv(NLCD2011, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_core_cv(NLCD2013, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+lsm_c_core_cv(NLCD2016, directions = 8, consider_boundary = FALSE, edge_depth = 1)
+
+```
+
+## Contagion and Interspersion Metrics: Clumpy Index (CLUMPY)
+
+```{r}
+# Core Area Metrics: Clumpy Index (CLUMPY)
+lsm_c_clumpy(NLCD2001)
+lsm_c_clumpy(NLCD2004)
+lsm_c_clumpy(NLCD2006)
+lsm_c_clumpy(NLCD2008)
+lsm_c_clumpy(NLCD2011)
+lsm_c_clumpy(NLCD2013)
+lsm_c_clumpy(NLCD2016)
+
+```
+
+## Diversity Metrics: Shannon's Diversity Index (SHDI)
+
+```{r}
+# Diversity Metrics: Shannon's Diversity Index (SHDI)
+lsm_l_shdi(NLCD2001)
+lsm_l_shdi(NLCD2004)
+lsm_l_shdi(NLCD2006)
+lsm_l_shdi(NLCD2008)
+lsm_l_shdi(NLCD2011)
+lsm_l_shdi(NLCD2013)
+lsm_l_shdi(NLCD2016)
+
+```
+
+## Diversity Metrics: Simpson's Diversity Index (SIDI)
+
+```{r}
+# Diversity Metrics: Simpson's Diversity Index (SIDI)
+lsm_l_sidi(NLCD2001, directions = 8)
+lsm_l_sidi(NLCD2004, directions = 8)
+lsm_l_sidi(NLCD2006, directions = 8)
+lsm_l_sidi(NLCD2008, directions = 8)
+lsm_l_sidi(NLCD2011, directions = 8)
+lsm_l_sidi(NLCD2013, directions = 8)
+lsm_l_sidi(NLCD2016, directions = 8)
+
+```
+
+## Diversity Metrics: Patch Richness (PR)
+
+```{r}
+# Diversity Metrics: Patch Richness (PR)
+lsm_l_pr(NLCD2001)
+lsm_l_pr(NLCD2004)
+lsm_l_pr(NLCD2006)
+lsm_l_pr(NLCD2008)
+lsm_l_pr(NLCD2011)
+lsm_l_pr(NLCD2013)
+lsm_l_pr(NLCD2016)
+
+```
+
+## Diversity Metrics: Patch Richness Density (PRD)
+
+```{r}
+# Diversity Metrics: Patch Richness Density (PRD)
+lsm_l_prd(NLCD2001, directions = 8)
+lsm_l_prd(NLCD2004, directions = 8)
+lsm_l_prd(NLCD2006, directions = 8)
+lsm_l_prd(NLCD2008, directions = 8)
+lsm_l_prd(NLCD2011, directions = 8)
+lsm_l_prd(NLCD2013, directions = 8)
+lsm_l_prd(NLCD2016, directions = 8)
+
+```
+
+## Diversity Metrics: Shannon's evenness index (SHEI)
+
+```{r}
+# Diversity Metrics: Shannon's evenness index (SHEI)
+lsm_l_shei(NLCD2001)
+lsm_l_shei(NLCD2004)
+lsm_l_shei(NLCD2006)
+lsm_l_shei(NLCD2008)
+lsm_l_shei(NLCD2011)
+lsm_l_shei(NLCD2013)
+lsm_l_shei(NLCD2016)
+
+```
+
+## Diversity Metrics: Simpson's evenness index (SIEI)
+
+```{r}
+# Diversity Metrics: Simpson's evenness index (SIEI)
+lsm_l_siei(NLCD2001, directions = 8)
+lsm_l_siei(NLCD2004, directions = 8)
+lsm_l_siei(NLCD2006, directions = 8)
+lsm_l_siei(NLCD2008, directions = 8)
+lsm_l_siei(NLCD2011, directions = 8)
+lsm_l_siei(NLCD2013, directions = 8)
+lsm_l_siei(NLCD2016, directions = 8)
+
+```

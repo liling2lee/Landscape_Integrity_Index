@@ -1,0 +1,158 @@
+---
+title: "Landscape Integrity Index (LII) - Model Validation"
+author: "Liling Lee"
+date: "11/02/2019"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+  html_notebook: default
+
+fontsize: 14pt
+---
+
+## Introduction
+The model was validated by (1) comparing the LII values with the values from the Landscape Condition Map (LCM) developed by Hak and Comer (2017) using a linear regression model, and (2) comparing the LII values in protected areas to the LII values in multiple-use areas using the Protected Areas Database of the United States (PAD-US) data from U.S. Geology Survey (USGS) Gap Analysis Project (GAP) and Welch's two sample t-test. The linear regression would show if there was a relationship between Landscape Integrity Index and Landscape Condition Map. And the Welch's two sample t-test would indicate if the mean LII value would be different between protected areas and multiple-use Areas. 
+
+```{r}
+# Set working directory
+wd <- setwd("C:/LII")
+
+# Install and load readxl, ggplot2, dplyr, tidyr, magrittr, gridExtra, e1071, kableExtra, and knitr packages
+
+if (!requireNamespace("readxl", quietly = TRUE))
+  install.packages("readxl")
+if (!requireNamespace("ggplot2", quietly = TRUE))
+  install.packages("ggplot2")
+if (!requireNamespace("dplyr", quietly = TRUE))
+  install.packages("dplyr")
+if (!requireNamespace("tidyr", quietly = TRUE))
+  install.packages("tidyr")
+if (!requireNamespace("magrittr", quietly = TRUE))
+  install.packages("magrittr")
+if (!requireNamespace("gridExtra", quietly = TRUE))
+  install.packages("gridExtra")
+if (!requireNamespace("e1071", quietly = TRUE))
+  install.packages("e1071")
+if (!requireNamespace("kableExtra", quietly = TRUE))
+  install.packages("kableExtra")
+if (!requireNamespace("knitr", quietly = TRUE))
+  install.packages("knitr")
+
+library(readxl)
+library(ggplot2)      # plotting & data
+library(dplyr)        # data manipulation
+library(tidyr)        # data re-shaping
+library(magrittr)     # pipe operator
+library(gridExtra)    # provides side-by-side plotting
+library(e1071)        # for skewness function
+library(kableExtra)
+library(knitr)
+
+```
+
+```{r}
+# Import data
+LII_LCM <- read_excel("C:/LII/ModelValidation.xlsx", sheet = "LII_LCM")
+LII_PADUS_100 <- read_excel("C:/LII/ModelValidation.xlsx", sheet = "LII_PADUS_100")
+
+```
+
+```{r}
+# Plot scatter plot to visualize the relationship
+scatter.smooth(x=LII_LCM$LCM_Value, y=LII_LCM$LII_Value, main="LCM ~ LII")
+
+```
+
+```{r}
+# Plot box plot to check for outliers
+par(mfrow=c(1, 2))  # divide graph area in 2 columns
+
+boxplot(LII_LCM$LCM_Value, main="LCM", sub=paste("Outlier rows: ", boxplot.stats(LII_LCM$LCM_Value)$out))  # box plot for 'LCM'
+
+boxplot(LII_LCM$LII_Value, main="LII", sub=paste("Outlier rows: ", boxplot.stats(LII_LCM$LII_Value)$out))  # box plot for 'LII'
+```
+
+```{r}
+# Plot density plot to check if response variable is close to normal
+par(mfrow=c(1, 2))  # divide graph area in 2 columns
+
+plot(density(LII_LCM$LCM_Value), main="LCM", ylab="Frequency", sub=paste("Skewness:", round(e1071::skewness(cars$speed), 2)))  # density plot for 'LCM'
+
+polygon(density(LII_LCM$LCM_Value), col="red")
+
+plot(density(LII_LCM$LII_Value), main="LII", ylab="Frequency", sub=paste("Skewness:", round(e1071::skewness(cars$dist), 2)))  # density plot for 'LII'
+
+polygon(density(LII_LCM$LII_Value), col="red")
+
+```
+
+```{r}
+# Calculate correlation between LCM value and LII value
+cor(LII_LCM$LCM_Value, LII_LCM$LII_Value)
+```
+
+```{r}
+# Build the linear regression model
+LII_LCM_lm <- lm(LII_LCM$LII_Value ~ LII_LCM$LCM_Value, data=LII_LCM)  # build linear regression model on full data
+print(LII_LCM_lm)
+summary(LII_LCM_lm)
+
+```
+
+```{r}
+str(summary(LII_LCM_lm))
+```
+
+```{r}
+summary(LII_LCM_lm)$r.squared
+```
+
+
+```{r}
+# Plot linear regression line
+plot(LII_LCM$LCM_Value, LII_LCM$LII_Value, pch = 16, cex = 1.3, col = "blue", main = "Linear Regression Line of LII and LCM Values", xlab = "LCM Value", ylab = "LII Value")
+
+abline(LII_LCM_lm)
+```
+
+```{r}
+# Plot linear regression line
+plot(LII_LCM$LCM_Value, LII_LCM$LII_Value, pch = 16, cex = 1.3, col = "blue", main = "", xlab = "", ylab = "")
+
+abline(LII_LCM_lm)
+```
+
+```{r}
+# Calculate the AIC and BIC for model goodness of fit
+AIC(LII_LCM_linearMod) 
+BIC(LII_LCM_linearMod) 
+
+```
+
+```{r}
+LII_PADUS_100_df <- LII_PADUS_100 %>%
+  filter(group == "Protected" | group == "Multiple Use") %>%
+  select(group, RASTERVALU)
+
+summary(LII_PADUS_100_df %>% filter(group == "Protected") %>% .$RASTERVALU)
+
+summary(LII_PADUS_100_df %>% filter(group == "Multiple Use") %>% .$RASTERVALU)
+
+```
+
+```{r}
+ggplot(LII_PADUS_100_df, aes(group, RASTERVALU)) + geom_boxplot()
+
+```
+
+```{r}
+LII_PADUS_ttest <- t.test(RASTERVALU ~ group, data = LII_PADUS_100_df)
+LII_PADUS_ttest
+
+```
+
+```{r}
+summary(LII_PADUS_ttest)
+
+```
